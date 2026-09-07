@@ -2,9 +2,10 @@ name: Build for Android
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "claude/**" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 permissions:
   contents: read
   pull-requests: write
@@ -21,4 +22,14 @@ jobs:
         run: |
           cd react-native && npm i
           cd android
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug assembleRelease
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: react-native/android/app/build/outputs/apk/debug/*.apk
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: react-native/android/app/build/outputs/apk/release/*.apk
